@@ -1,0 +1,50 @@
+$primary-color: #007bff;
+$background-color: #f8f9fa;
+$card-bg: white;
+$card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: $background-color;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); // Chia thành các cột linh hoạt
+  gap: 15px;
+}
+
+.card {
+  background: $card-bg;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: $card-shadow;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+h1 {
+  text-align: center;
+  color: $primary-color;
+  grid-column: span 2; // Để tiêu đề chiếm toàn bộ chiều rộng
+}
+
+h2 {
+  color: $primary-color;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr; // Khi màn hình nhỏ, xếp dọc các card
+  }
+}
