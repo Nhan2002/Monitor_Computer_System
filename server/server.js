@@ -2,11 +2,33 @@ const express = require("express");
 const cors = require("cors");
 const si = require("systeminformation");
 const dns = require("dns");
+const os = require("os");
 
 const app = express();
 const PORT = 3001;
 
 app.use(cors());
+
+function getIPv4() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "Không tìm thấy IPv4";
+}
+
+// API lấy IPv4
+app.get("/ipv4", (req, res) => {
+  res.json({ ipv4: getIPv4() });
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🌍 Server đang chạy tại: http://${getIPv4()}:${PORT}`);
+});
 
 // Lấy thông tin cơ bản về hệ thống
 app.get("/system", async (req, res) => {
