@@ -1,36 +1,30 @@
 const express = require("express");
 const cors = require("cors");
 const si = require("systeminformation");
-const dns = require("dns");
 const os = require("os");
+const network = require("network");
 
 const app = express();
 const PORT = 3001;
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
-function getIPv4() {
+const HOST = "0.0.0.0"; // Cho phép truy cập từ mọi thiết bị trong mạng LAN
+
+// Lấy địa chỉ IP nội bộ
+function getLocalIP() {
   const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    for (const iface of interfaces[name]) {
-      if (iface.family === "IPv4" && !iface.internal) {
-        return iface.address;
+  for (let iface in interfaces) {
+    for (let alias of interfaces[iface]) {
+      if (alias.family === "IPv4" && !alias.internal) {
+        return alias.address;
       }
     }
   }
-  return "Không tìm thấy IPv4";
+  return "Không tìm thấy IP";
 }
 
-// API lấy IPv4
-app.get("/ipv4", (req, res) => {
-  res.json({ ipv4: getIPv4() });
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🌍 Server đang chạy tại: http://${getIPv4()}:${PORT}`);
-});
-
-// Lấy thông tin cơ bản về hệ thống
+// Lấy thông tin hệ thống từ máy khách
 app.get("/system", async (req, res) => {
   try {
     const osInfo = await si.osInfo();
@@ -40,6 +34,7 @@ app.get("/system", async (req, res) => {
       distro: osInfo.distro,
       arch: osInfo.arch,
       uptime: si.time().uptime,
+      ip: getLocalIP(), // Trả về địa chỉ IP của server
     };
     res.json(system);
   } catch (error) {
@@ -65,7 +60,7 @@ app.get("/cpu", async (req, res) => {
   }
 });
 
-// Lấy thông tin GPU (nếu có)
+// Lấy thông tin GPU
 app.get("/gpu", async (req, res) => {
   try {
     const gpus = await si.graphics();
@@ -108,13 +103,12 @@ app.get("/disk", async (req, res) => {
   }
 });
 
-// Lấy thông tin tốc độ mạng
+// Lấy thông tin mạng
 app.get("/network", async (req, res) => {
   try {
     const networkInterfaces = await si.networkInterfaces();
     const networkStats = await si.networkStats();
 
-    // Lọc địa chỉ IPv4 và IPv6 từ danh sách interfaces
     const interfaces = networkInterfaces.map((iface) => ({
       name: iface.iface,
       ipv4: iface.ip4 || "Không có",
@@ -122,7 +116,6 @@ app.get("/network", async (req, res) => {
       mac: iface.mac,
     }));
 
-    // Lấy tốc độ mạng
     const networkSpeed = {
       rx: (networkStats[0].rx_sec / 1e6).toFixed(2) + " Mbps",
       tx: (networkStats[0].tx_sec / 1e6).toFixed(2) + " Mbps",
@@ -138,6 +131,6 @@ app.get("/network", async (req, res) => {
 });
 
 // Khởi động server
-app.listen(PORT, () => {
-  console.log(`Server chạy tại http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`🌐 Server chạy trên: http://${getLocalIP()}:${PORT}`);
 });
