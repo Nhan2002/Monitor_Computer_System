@@ -5,7 +5,7 @@ const os = require("os");
 const network = require("network");
 
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 
 app.use(cors({ origin: "*" }));
 

@@ -4,7 +4,7 @@ const SystemInfo = () => {
   const [system, setSystem] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/system")
+    fetch("http://localhost:3000/system")
       .then((res) => res.json())
       .then((data) => setSystem(data));
   }, []);

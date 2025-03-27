@@ -4,7 +4,7 @@ const GpuInfo = () => {
   const [gpus, setGpus] = useState([]);
 
   const fetchGpuInfo = () => {
-    fetch("http://localhost:3001/gpu")
+    fetch("http://localhost:3000/gpu")
       .then((res) => res.json())
       .then((data) => setGpus(data));
   };

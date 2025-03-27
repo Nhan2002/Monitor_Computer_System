@@ -4,7 +4,7 @@ const DiskInfo = () => {
   const [disks, setDisks] = useState([]);
 
   const fetchDiskInfo = () => {
-    fetch("http://localhost:3001/disk")
+    fetch("http://localhost:3000/disk")
       .then((res) => res.json())
       .then((data) => setDisks(data));
   };

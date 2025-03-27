@@ -4,7 +4,7 @@ const CpuInfo = () => {
   const [cpu, setCpu] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/cpu")
+    fetch("http://localhost:3000/cpu")
       .then((res) => res.json())
       .then((data) => setCpu(data));
   }, []);

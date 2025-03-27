@@ -4,7 +4,7 @@ const NetworkInfo = () => {
   const [network, setNetwork] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/network")
+    fetch("http://localhost:3000/network")
       .then((res) => res.json())
       .then((data) => setNetwork(data));
   }, []);

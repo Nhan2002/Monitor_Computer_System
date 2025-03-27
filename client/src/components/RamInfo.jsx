@@ -4,7 +4,7 @@ const RamInfo = () => {
   const [ram, setRam] = useState(null);
 
   const fetchRamInfo = () => {
-    fetch("http://localhost:3001/ram")
+    fetch("http://localhost:3000/ram")
       .then((res) => res.json())
       .then((data) => setRam(data));
   };
