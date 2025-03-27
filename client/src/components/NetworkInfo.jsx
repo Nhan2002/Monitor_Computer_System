@@ -14,11 +14,12 @@ const NetworkInfo = () => {
       <h2>Thông tin Mạng</h2>
       {network ? (
         <>
+          <h3>Tốc độ</h3>
           <ul>
             <li><strong>Download:</strong> {network.speed.rx}</li>
             <li><strong>Upload:</strong> {network.speed.tx}</li>
           </ul>
-          <h3>Interfaces</h3>
+          <h3>Thông tin chi tiết</h3>
           {network.interfaces.map((iface, index) => (
             <ul key={index}>
               <li><strong>Tên:</strong> {iface.name}</li>

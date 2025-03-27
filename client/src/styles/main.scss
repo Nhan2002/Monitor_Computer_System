@@ -1,15 +1,21 @@
-$primary-color: #007bff;
-$background-color: #f8f9fa;
-$card-bg: white;
-$card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+// 🎨 Màu sắc & Font chữ
+$primary-color: #0056b3;
+$secondary-color: #17a2b8;
+$background-color: #eef2f3;
+$card-bg: #ffffff;
+$card-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+$text-color: #333;
+$font-family: "Poppins", sans-serif;
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: $font-family;
   background-color: $background-color;
   margin: 0;
   padding: 0;
   display: flex;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .container {
@@ -17,34 +23,62 @@ body {
   max-width: 1000px;
   margin: 20px auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); // Chia thành các cột linh hoạt
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
 }
 
-.card {
-  background: $card-bg;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: $card-shadow;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    transform: scale(1.02);
-  }
-}
-
+// 🏷️ Tiêu đề chính (Giữ căn giữa)
 h1 {
   text-align: center;
   color: $primary-color;
-  grid-column: span 2; // Để tiêu đề chiếm toàn bộ chiều rộng
+  font-size: 28px;
+  font-weight: 700;
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  grid-column: span 2;
 }
 
-h2 {
-  color: $primary-color;
+// 🖼️ Card giao diện (Căn trái nội dung)
+.card {
+  background: $card-bg;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: $card-shadow;
+  transition: all 0.3s ease-in-out;
+  text-align: left; // ❗ Căn trái nội dung bên trong
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  h2 {
+    color: $secondary-color;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  p,
+  ul {
+    color: $text-color;
+    font-size: 16px;
+    margin: 5px 0;
+    padding-left: 10px; // Giúp bố cục gọn gàng hơn
+  }
+
+  ul {
+    list-style-type: none; // Bỏ dấu chấm mặc định
+  }
+
+  li {
+    padding: 3px 0;
+  }
 }
 
+// 📱 Responsive
 @media (max-width: 768px) {
   .container {
-    grid-template-columns: 1fr; // Khi màn hình nhỏ, xếp dọc các card
+    grid-template-columns: 1fr;
   }
 }
