@@ -67,7 +67,7 @@ app.get("/gpu", async (req, res) => {
     const gpuList = gpus.controllers.map((gpu) => ({
       model: gpu.model,
       vram: gpu.vram,
-      temperature: gpu.temperatureGpu,
+      temperature: gpu.temperatureGpu || "Không có",
     }));
     res.json(gpuList);
   } catch (error) {
