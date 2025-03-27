@@ -24,6 +24,7 @@ const GpuInfo = () => {
             <li><strong>Model:</strong> {gpu.model}</li>
             <li><strong>VRAM:</strong> {gpu.vram} MB</li>
             <li><strong>Nhiệt độ:</strong> {gpu.temperature}°C</li>
+            <li><strong>Load:</strong> {gpu.load}</li>
           </ul>
         ))
       ) : (

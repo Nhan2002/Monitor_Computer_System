@@ -2,14 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const si = require("systeminformation");
 const os = require("os");
-const network = require("network");
 
 const app = express();
 const PORT = 3000;
 
 app.use(cors({ origin: "*" }));
-
-const HOST = "0.0.0.0"; // Cho phép truy cập từ mọi thiết bị trong mạng LAN
 
 // Lấy địa chỉ IP nội bộ
 function getLocalIP() {
@@ -24,25 +21,24 @@ function getLocalIP() {
   return "Không tìm thấy IP";
 }
 
-// Lấy thông tin hệ thống từ máy khách
+// API: Lấy thông tin hệ thống
 app.get("/system", async (req, res) => {
   try {
     const osInfo = await si.osInfo();
-    const system = {
+    res.json({
       hostname: osInfo.hostname,
       platform: osInfo.platform,
       distro: osInfo.distro,
       arch: osInfo.arch,
       uptime: si.time().uptime,
-      ip: getLocalIP(), // Trả về địa chỉ IP của server
-    };
-    res.json(system);
+      ip: getLocalIP(),
+    });
   } catch (error) {
     res.status(500).json({ error: "Lỗi khi lấy thông tin hệ thống" });
   }
 });
 
-// Lấy thông tin CPU
+// API: Lấy thông tin CPU
 app.get("/cpu", async (req, res) => {
   try {
     const cpu = await si.cpu();
@@ -53,29 +49,33 @@ app.get("/cpu", async (req, res) => {
       speed: cpu.speed,
       cores: cpu.physicalCores,
       threads: cpu.cores,
-      load: cpuLoad.currentLoad.toFixed(1), // Làm tròn 1 số thập phân
+      load: cpuLoad.currentLoad.toFixed(1),
     });
   } catch (error) {
     res.status(500).json({ error: "Lỗi khi lấy thông tin CPU" });
   }
 });
 
-// Lấy thông tin GPU
+// API: Lấy thông tin GPU (có GPU Load)
 app.get("/gpu", async (req, res) => {
   try {
     const gpus = await si.graphics();
-    const gpuList = gpus.controllers.map((gpu) => ({
+    const gpuLoad = await si.currentLoad(); // Lấy tải GPU
+
+    const gpuList = gpus.controllers.map((gpu, index) => ({
       model: gpu.model,
-      vram: gpu.vram,
-      temperature: gpu.temperatureGpu || "Không có",
+      vram: gpu.vram + " MB",
+      temperature: gpu.temperatureGpu ? gpu.temperatureGpu + "°C" : "N/A",
+      load: gpuLoad.gpu ? gpuLoad.gpu[index].toFixed(1) + "%" : "N/A",
     }));
+
     res.json(gpuList);
   } catch (error) {
     res.status(500).json({ error: "Lỗi khi lấy thông tin GPU" });
   }
 });
 
-// Lấy thông tin RAM
+// API: Lấy thông tin RAM
 app.get("/ram", async (req, res) => {
   try {
     const mem = await si.mem();
@@ -88,7 +88,7 @@ app.get("/ram", async (req, res) => {
   }
 });
 
-// Lấy thông tin ổ cứng
+// API: Lấy thông tin ổ cứng
 app.get("/disk", async (req, res) => {
   try {
     const disk = await si.fsSize();
@@ -103,7 +103,7 @@ app.get("/disk", async (req, res) => {
   }
 });
 
-// Lấy thông tin mạng
+// API: Lấy thông tin mạng (đảm bảo tránh lỗi undefined)
 app.get("/network", async (req, res) => {
   try {
     const networkInterfaces = await si.networkInterfaces();
@@ -116,21 +116,21 @@ app.get("/network", async (req, res) => {
       mac: iface.mac,
     }));
 
-    const networkSpeed = {
-      rx: (networkStats[0].rx_sec / 1e6).toFixed(2) + " Mbps",
-      tx: (networkStats[0].tx_sec / 1e6).toFixed(2) + " Mbps",
-    };
+    const networkSpeed =
+      networkStats.length > 0
+        ? {
+            rx: (networkStats[0].rx_sec / 1e6).toFixed(2) + " Mbps",
+            tx: (networkStats[0].tx_sec / 1e6).toFixed(2) + " Mbps",
+          }
+        : { rx: "0 Mbps", tx: "0 Mbps" };
 
-    res.json({
-      interfaces,
-      speed: networkSpeed,
-    });
+    res.json({ interfaces, speed: networkSpeed });
   } catch (error) {
     res.status(500).json({ error: "Lỗi khi lấy thông tin mạng" });
   }
 });
 
 // Khởi động server
-app.listen(PORT, HOST, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`🌐 Server chạy trên: http://${getLocalIP()}:${PORT}`);
 });
