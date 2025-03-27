@@ -1,37 +1,46 @@
 import { useEffect, useState } from "react";
 
 const GpuInfo = () => {
-  const [gpus, setGpus] = useState([]);
+    const [gpuInfo, setGpuInfo] = useState(null);
 
-  const fetchGpuInfo = () => {
-    fetch("http://localhost:3000/gpu")
-      .then((res) => res.json())
-      .then((data) => setGpus(data));
-  };
+    useEffect(() => {
+        fetch("http://localhost:3000/gpu")
+            .then((res) => res.json())
+            .then((data) => setGpuInfo(data))
+            .catch((error) => console.error("Lỗi khi lấy thông tin GPU:", error));
+    }, []);
 
-  useEffect(() => {
-    fetchGpuInfo();
-    const interval = setInterval(fetchGpuInfo, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    return (
+        <div className="card">
+            <h2>Thông tin GPU</h2>
+            {gpuInfo ? (
+                <>
+                    <h3>GPU</h3>
+                    <ul>
+                        {gpuInfo.gpu.map((gpu, index) => (
+                            <li key={index}>
+                                <p><strong>Hãng:</strong> {gpu.vendor}</p>
+                                <p><strong>Model:</strong> {gpu.model}</p>
+                                <p><strong>VRAM:</strong> {gpu.vram} MB</p>
+                            </li>
+                        ))}
+                    </ul>
 
-  return (
-    <div className="card">
-      <h2>Thông tin GPU</h2>
-      {gpus.length > 0 ? (
-        gpus.map((gpu, index) => (
-          <ul key={index}>
-            <li><strong>Model:</strong> {gpu.model}</li>
-            <li><strong>VRAM:</strong> {gpu.vram} MB</li>
-            <li><strong>Nhiệt độ:</strong> {gpu.temperature}°C</li>
-            <li><strong>Load:</strong> {gpu.load}</li>
-          </ul>
-        ))
-      ) : (
-        <p>Đang tải...</p>
-      )}
-    </div>
-  );
+                    <h3>Màn hình</h3>
+                    <ul>
+                        {gpuInfo.display.map((display, index) => (
+                            <li key={index}>
+                                <p><strong>Độ phân giải:</strong> {display.resolution}</p>
+                                <p><strong>Tần số quét:</strong> {display.refreshRate} Hz</p>
+                            </li>
+                        ))}
+                    </ul>
+                </>
+            ) : (
+                <p>Đang tải...</p>
+            )}
+        </div>
+    );
 };
 
 export default GpuInfo;
