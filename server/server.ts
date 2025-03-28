@@ -42,15 +42,27 @@ app.get("/system", async (req, res) => {
     }
 });
 
-// 🔋 Lấy thông tin CPU
 app.get("/cpu", async (req, res) => {
     try {
-        const cpu = await si.cpu();
-        res.json(cpu);
+      const cpu = await si.cpu();
+      const cpuLoad = await si.currentLoad();
+      res.json({
+        manufacturer: cpu.manufacturer,
+        brand: cpu.brand,
+        speed: cpu.speed,
+        speedMax: cpu.speedMax || "Không rõ",
+        physicalCores: cpu.physicalCores,
+        cores: cpu.cores,
+        socket: cpu.socket || "Không rõ",
+        load: cpuLoad.currentLoad.toFixed(1), // Load CPU
+        user: cpuLoad.currentLoadUser.toFixed(1), // Load CPU User
+        system: cpuLoad.currentLoadSystem.toFixed(1), // Load CPU System
+        idle: cpuLoad.currentLoadIdle.toFixed(1), // Load CPU Idle
+      });
     } catch (error) {
-        res.status(500).json({ error: "Failed to retrieve CPU information" });
+      res.status(500).json({ error: "Lỗi khi lấy thông tin CPU" });
     }
-});
+  });  
 
 // 🛑 Lấy thông tin RAM
 app.get("/ram", async (req, res) => {
