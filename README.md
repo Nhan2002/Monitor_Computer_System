@@ -4,9 +4,9 @@
 
 ## 📌 Tính năng chính
 
-✅ Hiển thị thông tin hệ thống (OS, CPU, GPU, RAM, Disk, Network).
-✅ Cập nhật dữ liệu theo thời gian thực.
-✅ Giao diện trực quan với React + Vite + Sass.
+- Hiển thị thông tin hệ thống (OS, CPU, GPU, RAM, Disk, Network).
+- Cập nhật dữ liệu theo thời gian thực.
+- Giao diện trực quan với React + Vite + Sass.
 
 ## 🛠️ Công nghệ sử dụng
 
