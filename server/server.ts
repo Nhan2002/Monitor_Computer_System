@@ -66,17 +66,31 @@ app.get("/ram", async (req, res) => {
     }
 });
 
-// 💾 Lấy thông tin ổ cứng
+// 💾 Lấy thông tin ổ cứng (Gồm cả phân vùng & phần trăm sử dụng)
 app.get("/disk", async (req, res) => {
     try {
-        const disk = await si.diskLayout();
-        res.json(disk.map(d => ({
+        const diskLayout = await si.diskLayout();
+        const diskUsage = await si.fsSize();
+
+        // Chuyển đổi dữ liệu về định dạng mong muốn
+        const disks = diskLayout.map(d => ({
             type: d.type,
             name: d.name,
             size: d.size,
             interface: d.interfaceType
-        })));
+        }));
+
+        const partitions = diskUsage.map(p => ({
+            mount: p.mount, // Phân vùng (C:, D:, /home, etc.)
+            size: p.size, // Dung lượng tổng
+            used: p.used, // Dung lượng đã dùng
+            available: p.available, // Dung lượng còn trống
+            usagePercent: ((p.used / p.size) * 100).toFixed(1) + "%" // Tính phần trăm
+        }));
+
+        res.json({ disks, partitions });
     } catch (error) {
+        console.error("❌ Lỗi lấy thông tin ổ cứng:", error);
         res.status(500).json({ error: "Failed to retrieve disk information" });
     }
 });

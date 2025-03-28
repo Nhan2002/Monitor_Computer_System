@@ -20,7 +20,8 @@ const SystemInfo = () => {
                     <li><strong>Số serial:</strong> {system.serial || "Không có"}</li>
                     <li><strong>Phiên bản BIOS:</strong> {system.bios.version || "Không rõ"}</li>
                     <li><strong>Mainboard:</strong> {system.baseboard.manufacturer} {system.baseboard.model}</li>
-                    <li><strong>Hệ điều hành:</strong> {system.os.distro} ({system.os.platform})</li>
+                    <li><strong>Hệ điều hành:</strong> {system.os.platform}</li>
+                    <li><strong>Phiên bản:</strong> {system.os.distro}</li>
                     <li><strong>Kiến trúc:</strong> {system.os.arch}</li>
                     <li><strong>Thời gian hoạt động:</strong> {Math.floor(system.time.uptime / 3600)} giờ {Math.floor((system.time.uptime % 3600) / 60)} phút</li>
                     <li><strong>Múi giờ:</strong> {system.time.timezone}</li>
